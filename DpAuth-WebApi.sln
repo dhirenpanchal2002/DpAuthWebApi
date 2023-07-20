@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DpAuthWebApi", "DpAuth-WebApi\DpAuthWebApi.csproj", "{8565868E-2E31-4340-A720-AF32C3311BB1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DpAuth.Messages.Abstractions", "DPAuth.Messages.Abstractions\DpAuth.Messages.Abstractions.csproj", "{8E876935-146E-4427-A315-00FE17C36896}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DpAuth.Notifications", "DpAuth.Notifications\DpAuth.Notifications.csproj", "{36732475-EAD0-481D-AE3E-9D22F8430C14}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DpAuthWebApi.Client", "DpAuthWebApi.Client\DpAuthWebApi.Client.csproj", "{9AF35CB9-AE58-4200-B1D2-E11C8855AB47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DpAuthWebApi.UnitTests", "DpAuthWebApi.UnitTests\DpAuthWebApi.UnitTests.csproj", "{C5DC25A7-30D4-4CD0-94BF-14F3F39FA234}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DpAuthWebApi.IntegrationTests", "DpAuthWebApi.IntegrationTests\DpAuthWebApi.IntegrationTests.csproj", "{98E68CDD-01F6-483A-A110-3AB47D2D6819}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8565868E-2E31-4340-A720-AF32C3311BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8565868E-2E31-4340-A720-AF32C3311BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8565868E-2E31-4340-A720-AF32C3311BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8565868E-2E31-4340-A720-AF32C3311BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E876935-146E-4427-A315-00FE17C36896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E876935-146E-4427-A315-00FE17C36896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E876935-146E-4427-A315-00FE17C36896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E876935-146E-4427-A315-00FE17C36896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36732475-EAD0-481D-AE3E-9D22F8430C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36732475-EAD0-481D-AE3E-9D22F8430C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36732475-EAD0-481D-AE3E-9D22F8430C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36732475-EAD0-481D-AE3E-9D22F8430C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AF35CB9-AE58-4200-B1D2-E11C8855AB47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AF35CB9-AE58-4200-B1D2-E11C8855AB47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AF35CB9-AE58-4200-B1D2-E11C8855AB47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AF35CB9-AE58-4200-B1D2-E11C8855AB47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5DC25A7-30D4-4CD0-94BF-14F3F39FA234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5DC25A7-30D4-4CD0-94BF-14F3F39FA234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5DC25A7-30D4-4CD0-94BF-14F3F39FA234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5DC25A7-30D4-4CD0-94BF-14F3F39FA234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98E68CDD-01F6-483A-A110-3AB47D2D6819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E68CDD-01F6-483A-A110-3AB47D2D6819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E68CDD-01F6-483A-A110-3AB47D2D6819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E68CDD-01F6-483A-A110-3AB47D2D6819}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE7AB1CA-1E33-4D18-A59D-BE5826E49D77}
+	EndGlobalSection
+EndGlobal

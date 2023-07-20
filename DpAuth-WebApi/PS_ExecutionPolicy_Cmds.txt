@@ -1,0 +1,5 @@
+﻿---To set the Execution policy after nswag run
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+---To Reset the Execution policy after nswag run
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser
