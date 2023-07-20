@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/DPAuth.Messages.Abstractions
+/DpAuthWebApi.UnitTests
+/DpAuthWebApi.IntegrationTests
+/DpAuthWebApi.Client
+/DpAuth.Notifications
+/DpAuth-WebApi
+/.vs/DpAuth-WebApi
