@@ -58,7 +58,7 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> Login(UserLogin loginUserDto)
         {
-            ServiceResponse<string> response = await _authService.Login(
+            ServiceResponse<UserDetails> response = await _authService.Login(
                 loginUserDto.UserName, loginUserDto.Password);
 
             if (!response.IsSuccess)
@@ -110,6 +110,35 @@ namespace DpAuthWebApi.Controllers
             await _publishEndpoint.Publish<IPasswordChangedEvent>(passwordChangedEvent);
 
             return Ok(response.data);
+        }
+
+        [HttpPost("SendVerificationCode")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public async Task<IActionResult> SendVerificationCode(string emailId)
+        {
+            ServiceResponse<string> response = await _authService.GenerateVerificationCode(emailId);
+
+            if (!response.IsSuccess)
+            {
+                if (response.Error == ErrorType.NotFoundError)
+                    return NotFound(response.ErrorMessage);
+
+                if (response.Error == ErrorType.GeneralError)
+                    return BadRequest(response.ErrorMessage);
+            }
+
+            var sendVerificationCodeEvent = new SendVerificationCodeEvent()
+            {
+                EmailId = emailId,
+                VerificationCode = response.data
+            };
+
+            //Publish User Logged in event
+            await _publishEndpoint.Publish<ISendVerificationCodeEvent>(sendVerificationCodeEvent);
+
+            return Ok("Successfully sent the verification code");
         }
     }
 }

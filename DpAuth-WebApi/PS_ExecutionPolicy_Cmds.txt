@@ -3,3 +3,8 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ---To Reset the Execution policy after nswag run
 Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser
+
+
+--RabbitMQ docker admin UI--
+username: admin
+pass: admin@123

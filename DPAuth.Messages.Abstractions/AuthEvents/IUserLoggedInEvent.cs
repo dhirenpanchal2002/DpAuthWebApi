@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DPAuth.Messages.Abstractions.Enums;
+﻿using DPAuth.Messages.Abstractions.Enums;
 
 namespace DPAuth.Messages.Abstractions.AuthEvents
 {
@@ -14,4 +9,5 @@ namespace DPAuth.Messages.Abstractions.AuthEvents
         public string EmailId { get; set; }
         public LoginDevice LoggedInDevice { get; set; }
     }
+
 }

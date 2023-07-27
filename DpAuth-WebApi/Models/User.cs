@@ -28,5 +28,7 @@ namespace DpAuthWebApi.Models
         public string PwdSalt { get; set; }
 
         public Boolean IsDeleted { get; set; } = false;
+
+        public Boolean IsVerificationCodeSet { get; set; } = false;
     }
 }

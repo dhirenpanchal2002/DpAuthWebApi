@@ -39,9 +39,21 @@ namespace DpAuthWebApi.Services
             }
             return false;
         }
-        public async Task<ServiceResponse<string>> Login(string username, string password)
+
+        public async Task<UserDocument> GetExistingUserExistWithEmail(string emailId)
         {
-            ServiceResponse<string> response = new ServiceResponse<string>();
+            var user = await _dataContext.FindOneAsync(filter => filter.EmailId == emailId);
+
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+        }
+
+        public async Task<ServiceResponse<UserDetails>> Login(string username, string password)
+        {
+            ServiceResponse<UserDetails> response = new ServiceResponse<UserDetails>();
 
             if(!await IsUserExist(username))
             {
@@ -56,20 +68,30 @@ namespace DpAuthWebApi.Services
 
                 if (user == null)
                 {
-                    return new ServiceResponse<string>("User not found.", ErrorType.NotFoundError);
+                    return new ServiceResponse<UserDetails>("User not found", ErrorType.NotFoundError);
                 }
 
                 if (!VerifyPasswordHash(password, Convert.FromBase64String(user.PwdHash), Convert.FromBase64String(user.PwdSalt)))
                 {
                     response.IsSuccess = false;
-                    response.ErrorMessage = "Wrong Password, authentication failed.";
+                    response.ErrorMessage = "Missing or invalid login details";
                     response.Error = ErrorType.GeneralError;
                 }
                 else
                 {
                     response.IsSuccess = true;
-                    response.data = CreateToekn(user);
-                    response.ErrorMessage = "Successfully logged in.";
+                    response.data = new UserDetails() 
+                    { 
+                        Id = user.Id.ToString(),
+                        UserName = user.UserName,
+                        AuthToken = CreateToken(user),
+                        EmailId = user.EmailId,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        IsVerificationCodeSet = user.IsVerificationCodeSet,
+                        IsDeleted = user.IsDeleted
+                    };
+                    response.ErrorMessage = "Successfully logged in";
                 }
             }
 
@@ -85,7 +107,8 @@ namespace DpAuthWebApi.Services
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PwdHash = Convert.ToBase64String(passwordHash, 0, passwordHash.Length);
-            user.PwdSalt = Convert.ToBase64String(passwordSalt, 0, passwordSalt.Length); 
+            user.PwdSalt = Convert.ToBase64String(passwordSalt, 0, passwordSalt.Length);
+            user.IsVerificationCodeSet = false;
 
             await _dataContext.InsertOneAsync(user);
 
@@ -93,7 +116,6 @@ namespace DpAuthWebApi.Services
             response.data = user.Id.ToString();
             return response;
         }
-
         public async Task<ServiceResponse<bool>> ChangePassword(string username, string password, string newpassword)
         {
             ServiceResponse<bool> response = new ServiceResponse<bool>();
@@ -119,6 +141,7 @@ namespace DpAuthWebApi.Services
 
                     user.PwdHash = Encoding.UTF8.GetString(passwordHash, 0, passwordHash.Length);
                     user.PwdSalt = Encoding.UTF8.GetString(passwordSalt, 0, passwordSalt.Length);
+                    user.IsVerificationCodeSet = false;
 
                     await _dataContext.ReplaceOneAsync(user);
 
@@ -127,6 +150,29 @@ namespace DpAuthWebApi.Services
                 }
             }
 
+            return response;
+        }
+        public async Task<ServiceResponse<string>> GenerateVerificationCode(string emailId)
+        {
+            var user = await GetExistingUserExistWithEmail(emailId);
+
+            if (user == null)
+            {
+                return new ServiceResponse<string> { data = null, IsSuccess = false, ErrorMessage = "User does not exists" };
+            }
+
+            var VerificationCode = RandomNumberGenerator.GetInt32(100001, 999999);
+            
+            CreatePasswordHash(VerificationCode.ToString(), out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PwdHash = Convert.ToBase64String(passwordHash, 0, passwordHash.Length);
+            user.PwdSalt = Convert.ToBase64String(passwordSalt, 0, passwordSalt.Length);
+            user.IsVerificationCodeSet = true;
+
+            await _dataContext.ReplaceOneAsync(user);
+
+            ServiceResponse<string> response = new ServiceResponse<string> { IsSuccess = true, Error = ErrorType.None };
+            response.data = VerificationCode.ToString();
             return response;
         }
 
@@ -178,7 +224,7 @@ namespace DpAuthWebApi.Services
             }
         }
 
-        private string CreateToekn(UserDocument user)
+        private string CreateToken(UserDocument user)
         {
             List<Claim> claims = new List<Claim>
             {

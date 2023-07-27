@@ -34,25 +34,26 @@ namespace DpAuthWebApi
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddScoped<ILeaveService, LeaveService>();
-            
 
-            ////Add Masstransit RabbitMQ
-            //builder.Services.AddMassTransit(x =>
-            //{
-            //    x.SetKebabCaseEndpointNameFormatter();
 
-            //    x.UsingRabbitMq((context, config) => {
+            //Add Masstransit RabbitMQ
+            builder.Services.AddMassTransit(x =>
+            {
+                x.SetKebabCaseEndpointNameFormatter();
 
-            //            config.Host("localhost", h =>
-            //            {
-            //                h.Username("admin");
-            //                h.Password("admin@123");
-            //            });
+                x.UsingRabbitMq((context, config) =>
+                {
 
-            //            config.ConfigureEndpoints(context);
+                    config.Host("localhost", h =>
+                    {
+                        h.Username("admin");
+                        h.Password("admin@123");
+                    });
 
-            //    });
-            //});
+                    config.ConfigureEndpoints(context);
+
+                });
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
                 (options =>
