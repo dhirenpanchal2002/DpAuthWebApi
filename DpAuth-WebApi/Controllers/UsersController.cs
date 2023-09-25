@@ -1,12 +1,18 @@
-﻿using DpAuthWebApi.Contracts;
+﻿using System.Web;
+using Azure.Storage.Blobs;
+using DpAuthWebApi.Contracts;
 using DpAuthWebApi.Models;
 using DpAuthWebApi.Services;
 using DpAuthWebApi.Services.Common;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using static MassTransit.ValidationResultExtensions;
 
 namespace DpAuthWebApi.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -14,11 +20,14 @@ namespace DpAuthWebApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger<UsersController> _logger;
-
-        public UsersController(IUserService userService, ILogger<UsersController> logger)
+        private readonly BlobServiceClient _blobServiceClient;
+        private readonly string ProfileContainerName;
+        public UsersController(IUserService userService, ILogger<UsersController> logger, BlobServiceClient blobServiceClient)
         {
             _userService = userService;
             _logger = logger;
+            _blobServiceClient = blobServiceClient;
+            ProfileContainerName = "dpauth-profiles";
         }
 
         [HttpGet("UserDetails")]
@@ -110,6 +119,57 @@ namespace DpAuthWebApi.Controllers
                 _logger.LogError("Unexpeced Error occured while getting all users");
                 return BadRequest("Unexpeced Error occured.");
             }
+        }
+
+        [HttpPost("ProfilePicture")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        public async Task<IActionResult> UploadUserProfilePicture(IFormFile uploadedFile)
+        {
+            var request = HttpContext.Request;
+            const int maxContentLength = 512 * 512 * 512;
+
+            try
+            {
+                if (request.ContentLength > maxContentLength || request.Form.Files.Count == 0)
+                    return BadRequest("Invalid upload file");
+
+                var pictureFile = request.Form.Files[0];
+
+                //Call upload to blob service
+                
+                var filePath = Path.Join(Directory.GetCurrentDirectory(),  @"\tempFiles\", DateTime.UtcNow.ToString("yyyyMMddHHmm") + "_" + pictureFile.FileName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await pictureFile.CopyToAsync(stream);
+                }
+
+                await UploadFileToContainerAsync(filePath);
+
+                var result = "Successful";
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Internal server error while uploading profile picture. {e.Message}");
+
+                return  StatusCode(500, $"Internal server error while uploading profile picture");
+            }
+        }
+
+        private async Task UploadFileToContainerAsync(string localFilePath)
+        {
+            string fileName = Path.GetFileName(localFilePath);
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(ProfileContainerName);
+
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+
+            await blobClient.UploadAsync(localFilePath, true);
         }
     }
 }

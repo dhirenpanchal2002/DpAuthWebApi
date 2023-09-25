@@ -26,7 +26,7 @@ namespace DpAuthWebApi.Controllers
         }
 
         [HttpGet("{leaveId}/details")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeaveDetail))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetLeaveDetails(string leaveId)
@@ -94,7 +94,7 @@ namespace DpAuthWebApi.Controllers
         }
 
         [HttpGet("user/{userId}/leaves")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveDetail>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetUserLeaves(string userId)
@@ -144,7 +144,7 @@ namespace DpAuthWebApi.Controllers
         }
 
         [HttpGet("approver/{approverId}/leaves")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveDetail>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetApproverLeaves(string approverId)
@@ -193,8 +193,8 @@ namespace DpAuthWebApi.Controllers
             }
         }
 
-        [HttpGet("/leaveTypes")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [HttpGet("leaveTypes")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetLeaveTypes()
         {
@@ -202,8 +202,8 @@ namespace DpAuthWebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/leaveStatuses")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [HttpGet("leaveStatuses")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetLeaveStatuses()
         {
@@ -211,8 +211,8 @@ namespace DpAuthWebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/leaveCategories")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [HttpGet("leaveCategories")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetLeaveCategories()
         {

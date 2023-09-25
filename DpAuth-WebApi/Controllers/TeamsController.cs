@@ -111,14 +111,31 @@ namespace DpAuthWebApi.Controllers
 
             if (response.data != null)
             {
-                var resultTeams = response.data.Select(x => new TeamDetails
+                var resultTeams = new List<TeamDetails>();
+                
+                foreach (var team in response.data)
                 {
-                    Id = x.Id.ToString(),
-                    TeamName = x.TeamName,
-                    TeamEmailId = x.TeamEmailId,
-                    CreatedAt = x.CreatedAt,
-                    IsDeleted = x.IsDeleted
-                });
+                    var teamLead = await _userService.GetUser(team.LeadUserId);
+
+                    resultTeams.Add(
+                        new TeamDetails()
+                            {
+                                Id = team.Id.ToString(),
+                                TeamName = team.TeamName,
+                                TeamEmailId = team.TeamEmailId,
+                                CreatedAt = team.CreatedAt,
+                                IsDeleted = team.IsDeleted,
+                                TeamLead = new UserDetails()
+                                {
+                                    Id = teamLead.data.Id.ToString(),
+                                    FirstName = teamLead.data.FirstName,
+                                    LastName = teamLead.data.LastName,
+                                    EmailId = teamLead.data.EmailId,
+                                    PhotoUrl = teamLead.data.PhotoUrl
+                                }
+                            }
+                        );
+                }
 
                 return Ok(resultTeams);
             }

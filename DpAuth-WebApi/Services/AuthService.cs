@@ -139,8 +139,8 @@ namespace DpAuthWebApi.Services
                 {
                     CreatePasswordHash(newpassword, out byte[] passwordHash, out byte[] passwordSalt);
 
-                    user.PwdHash = Encoding.UTF8.GetString(passwordHash, 0, passwordHash.Length);
-                    user.PwdSalt = Encoding.UTF8.GetString(passwordSalt, 0, passwordSalt.Length);
+                    user.PwdHash = Convert.ToBase64String(passwordHash, 0, passwordHash.Length);
+                    user.PwdSalt = Convert.ToBase64String(passwordSalt, 0, passwordSalt.Length);
                     user.IsVerificationCodeSet = false;
 
                     await _dataContext.ReplaceOneAsync(user);

@@ -9,6 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DpAuthWebApi.Models;
 using MassTransit;
+using Azure.Storage.Blobs;
+using MongoDB.Driver.Core.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Azure;
+using Azure.Identity;
 
 namespace DpAuthWebApi
 {
@@ -19,6 +24,22 @@ namespace DpAuthWebApi
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container. [ConfigureServices]
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
+               (options =>
+                   {
+                       options.TokenValidationParameters = new TokenValidationParameters
+                       {
+                           ValidateIssuerSigningKey = true,
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                           ValidateIssuer = false,
+                           ValidateAudience = false,
+                           ValidateLifetime = true,
+                       };
+                   }
+               );
+
+            builder.Services.AddAuthorization();
+
 
             builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
@@ -28,12 +49,38 @@ namespace DpAuthWebApi
             builder.Services.AddScoped(typeof(IMongoRepository<UserDocument>), typeof(MongoRepository<UserDocument>));
             builder.Services.AddScoped<IMongoRepository<TeamDocument>, MongoRepository<TeamDocument>>();
             builder.Services.AddScoped<IMongoRepository<LeaveDocument>, MongoRepository<LeaveDocument>>();
+            builder.Services.AddScoped<IMongoRepository<TodoDocument>, MongoRepository<TodoDocument>>();
             //builder.Services.AddScoped<IMongoRepository<UserDocument>, MongoRepository<UserDocument>>();
+            // Inside of Program.cs
+            builder.Services.AddSingleton<BlobServiceClient>(x =>
+                new BlobServiceClient(
+                    "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
+                    ));
+            /*
+            builder.Services.AddAzureClients(clientBuilder =>
+            {
+                // Register clients for each service
+                //clientBuilder.AddSecretClient(new Uri("<key_vault_url>"));
+                clientBuilder.AddBlobServiceClient(new Uri("http://127.0.0.1:10000/devstoreaccount1"), new DefaultAzureCredential());
+                //clientBuilder.AddServiceBusClientWithNamespace("<your_namespace>.servicebus.windows.net");
+                clientBuilder.UseCredential(new DefaultAzureCredential());
+
+                // Register a subclient for each Service Bus Queue
+                foreach (string queue in queueNames)
+                {
+                    clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>(
+                        (_, _, provider) => provider.GetService<ServiceBusClient>()
+                                .CreateSender(queue)).WithName(queue);
+                }
+            });
+            */
+
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddScoped<ILeaveService, LeaveService>();
+            builder.Services.AddScoped<ITodoService, TodoService>();
 
 
             //Add Masstransit RabbitMQ
@@ -55,18 +102,7 @@ namespace DpAuthWebApi
                 });
             });
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
-                (options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                }
-                );
+       
 
             builder.Services.AddCors(options =>
             {
@@ -96,6 +132,8 @@ namespace DpAuthWebApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
