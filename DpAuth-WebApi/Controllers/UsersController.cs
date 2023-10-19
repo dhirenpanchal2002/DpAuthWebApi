@@ -12,11 +12,12 @@ using static MassTransit.ValidationResultExtensions;
 
 namespace DpAuthWebApi.Controllers
 {
-    [Authorize]
+    
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    [Authorize]
+    public class UsersController : BaseApiController
     {
         private readonly IUserService _userService;
         private readonly ILogger<UsersController> _logger;
@@ -34,12 +35,12 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<IActionResult> GetUserDetails(string userId)
+        public async Task<IActionResult> GetCurrentUserDetails(string userId)
         {
             if(string.IsNullOrWhiteSpace(userId))
             {
-                _logger.LogError("userId is empty or invalid");
-                return BadRequest("userId is empty or invalid");
+                _logger.LogError("CurrentUserId is empty or invalid");
+                return BadRequest("CurrentUserId is empty or invalid");
             }
 
             ServiceResponse<UserDocument> response = await _userService.GetUser(userId);

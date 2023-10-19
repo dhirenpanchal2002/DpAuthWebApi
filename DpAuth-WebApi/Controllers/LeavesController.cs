@@ -5,11 +5,13 @@ using DpAuthWebApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DpAuthWebApi.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DpAuthWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LeavesController : ControllerBase
     {
         private readonly ILeaveService _leaveService;

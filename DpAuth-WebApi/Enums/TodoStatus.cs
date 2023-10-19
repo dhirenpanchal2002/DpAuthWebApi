@@ -1,10 +1,10 @@
 ﻿namespace DpAuthWebApi.Enums
 {
-    public enum TodoStatus
+    public static class TodoStatus
     {
-        Pending = 0,
-        InProgress = 1,
-        Completed = 2,
-        Cancelled = 3
+        public const string Pending = "pending";
+        public const string InProgress = "inprogress";
+        public const string Completed = "completed";
+        public const string Cancelled = "cancelled";
     }
 }

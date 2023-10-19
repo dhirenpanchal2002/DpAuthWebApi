@@ -4,6 +4,7 @@ using DpAuthWebApi.Models;
 using DpAuthWebApi.Services.Common;
 using DpAuthWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,7 +12,8 @@ namespace DpAuthWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodosController : ControllerBase
+    [Authorize]
+    public class TodosController : BaseApiController
     {
         private readonly ITodoService _todoService;
         private readonly IUserService _userService;
@@ -30,6 +32,7 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TodoDetail))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         public async Task<IActionResult> GetTodoDetails(string todoId)
         {
             if (string.IsNullOrWhiteSpace(todoId))
@@ -57,7 +60,6 @@ namespace DpAuthWebApi.Controllers
                 TodoDetail details = new TodoDetail()
                 {
                     Id = response.data.Id.ToString(),
-                    UserId = response.data.UserId.ToString(),
                     CompletedOn = response.data.CompletedOn,
                     CreatedAt = response.data.CreatedAt,
                     Status = response.data.Status,                    
@@ -78,41 +80,43 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         public async Task<IActionResult> AddTodo(TodoDetail todo)
         {
-            if (string.IsNullOrWhiteSpace(todo.Id))
+            if (string.IsNullOrWhiteSpace(todo.Summary))
             {
-                _logger.LogError("todoId is empty or invalid");
-                return BadRequest("todoId is empty or invalid");
+                _logger.LogError("todo summary is empty or invalid");
+                return BadRequest("todo summary is empty or invalid");
             }
 
-            ServiceResponse<TodoDocument> response = await _todoService.GetTodoAsync(todo.Id); ;
+            //instead check with summary if exist???
+            //ServiceResponse<TodoDocument> response = await _todoService.GetTodoAsync(todo.Id); ;
 
-            if (response.IsSuccess && response.data != null)
-            {
-                _logger.LogError("todo with given Id is already exist");
-                return  Conflict("todo with given Id is already exist");
-            }
+            //if (response.IsSuccess && response.data != null)
+            //{
+            //    _logger.LogError("todo with given Id is already exist");
+            //    return  Conflict("todo with given Id is already exist");
+            //}
 
             //todo not exist so Add 
-            if (response.data == null)
+            try
             {
                 TodoDocument todoDocument = new TodoDocument()
                 {
-                    UserId = todo.UserId.ToString(),
+                    Summary = todo.Summary,
+                    UserId = CurrentUserId,
                     CompletedOn = todo.CompletedOn,                    
                     Status = todo.Status,
-                    Description = todo.Description,
-                    Summary = todo.Summary
+                    Description = todo.Description
                 };
 
                 var result = await _todoService.CreateTodoAsync(todoDocument);
 
                 return Ok(result.data.ToString());
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogError($"Unexpected error occured while adding new todo");
+                _logger.LogError($"Unexpected error occured while adding new todo. {ex.Message}");
                 return BadRequest($"Unexpected error occured while adding new todo");
             }
         }
@@ -121,6 +125,7 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         public async Task<IActionResult> UpdateTodo(TodoDetail todo)
         {
             if (string.IsNullOrWhiteSpace(todo.Id))
@@ -137,7 +142,7 @@ namespace DpAuthWebApi.Controllers
                 return Conflict("todo with given Id does not exist");
             }
 
-            //todo not exist so Add 
+            //todo exist so update
             if (response.data != null)
             {
                 TodoDocument todoDocument = response.data;
@@ -158,17 +163,18 @@ namespace DpAuthWebApi.Controllers
             }
         }
 
-        [HttpGet("user/{userId}/todos")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
+        [HttpGet("todos")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TodoDetail>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
-        public async Task<IActionResult> GetUserTodos(string userId)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
+        public async Task<IActionResult> GetCurrentUserTodos()
         {
-            ServiceResponse<IEnumerable<TodoDocument>> response = await _todoService.GetTodosAsync(userId);
+            ServiceResponse<IEnumerable<TodoDocument>> response = await _todoService.GetTodosAsync(CurrentUserId);
 
             if (!response.IsSuccess)
             {
-                _logger.LogError($"Error occured while getting leaves for userId. {response.ErrorMessage}");
+                _logger.LogError($"Error occured while getting todos for CurrentUserId. {response.ErrorMessage}");
 
                 if (response.Error == ErrorType.NotFoundError)
                     return NotFound(response.ErrorMessage);
@@ -183,7 +189,6 @@ namespace DpAuthWebApi.Controllers
                 var resultTeams = response.data.Select(x => new TodoDetail
                 {
                     Id = x.Id.ToString(),
-                    UserId = x.UserId.ToString(),
                     CompletedOn = x.CompletedOn,
                     CreatedAt = x.CreatedAt,
                     Status = x.Status,
@@ -195,20 +200,20 @@ namespace DpAuthWebApi.Controllers
             }
             else
             {
-                _logger.LogError($"Unexpeced Error occured while getting todos for userId {userId}.");
-                return BadRequest($"Unexpeced Error occured while getting todos for userId {userId}");
+                _logger.LogError($"Unexpeced Error occured while getting todos for CurrentUserId {CurrentUserId}.");
+                return BadRequest($"Unexpeced Error occured while getting todos for CurrentUserId {CurrentUserId}");
             }
         }
 
         
-        [HttpGet("todoStatuses")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult GetTodoStatuses()
-        {
-            var result = Enum.GetNames(typeof(TodoStatus)).ToList();
-            return Ok(result);
-        }
+        //[HttpGet("todoStatuses")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        //public IActionResult GetTodoStatuses()
+        //{
+        //    var result = Enum.GetNames(typeof(TodoStatus)).ToList();
+        //    return Ok(result);
+        //}
 
     }
 }

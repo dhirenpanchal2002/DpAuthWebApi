@@ -77,7 +77,7 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            await _publishEndpoint.Publish<IUserLoggedInEvent>(useLoggedinEvent); 
+            //await _publishEndpoint.Publish<IUserLoggedInEvent>(useLoggedinEvent); 
 
             return Ok(response.data);
         }
@@ -107,7 +107,7 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            await _publishEndpoint.Publish<IPasswordChangedEvent>(passwordChangedEvent);
+            //await _publishEndpoint.Publish<IPasswordChangedEvent>(passwordChangedEvent);
 
             return Ok(response.data);
         }
@@ -136,7 +136,7 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            await _publishEndpoint.Publish<ISendVerificationCodeEvent>(sendVerificationCodeEvent);
+            //await _publishEndpoint.Publish<ISendVerificationCodeEvent>(sendVerificationCodeEvent);
 
             return Ok("Successfully sent the verification code");
         }

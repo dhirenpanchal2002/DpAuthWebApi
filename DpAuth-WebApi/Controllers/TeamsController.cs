@@ -2,6 +2,7 @@
 using DpAuthWebApi.Models;
 using DpAuthWebApi.Services;
 using DpAuthWebApi.Services.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -11,6 +12,7 @@ namespace DpAuthWebApi.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TeamsController : ControllerBase
     {
         private readonly ITeamService _teamService;
@@ -93,6 +95,7 @@ namespace DpAuthWebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TeamDetails>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         public async Task<IActionResult> GetAllTeams()
         {
             ServiceResponse<IEnumerable<TeamDocument>> response = await _teamService.GetAllTeams();

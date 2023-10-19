@@ -18,7 +18,7 @@ namespace DpAuthWebApi.Models
 
         public string Description { get; set; }                
 
-        public TodoStatus Status { get; set; } = TodoStatus.Pending;
+        public string Status { get; set; } = TodoStatus.Pending;
 
         public DateTimeOffset? CompletedOn { get; set; }
     }
