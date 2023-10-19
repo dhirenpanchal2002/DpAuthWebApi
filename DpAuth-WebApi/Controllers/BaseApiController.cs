@@ -22,7 +22,7 @@ namespace DpAuthWebApi.Controllers
 {
     public class BaseApiController : ControllerBase
     {
-        public string CurrentUserId
+        public virtual string CurrentUserId
         {
             get
             {
@@ -30,7 +30,7 @@ namespace DpAuthWebApi.Controllers
             }
         }
 
-        public string CurrentUserEmail
+        public virtual string CurrentUserEmail
         {
             get
             {
@@ -38,7 +38,7 @@ namespace DpAuthWebApi.Controllers
             }
         }
 
-        public string CurrentUserName
+        public virtual string CurrentUserName
         {
             get
             {
