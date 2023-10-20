@@ -1,0 +1,14 @@
+.App {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: calc(30px + 2vmin);;
+  background-color: #1f1f1f;
+  width: 100%;
+}
+.App-header {
+  padding: auto;
+  font-size: calc(20px + 2vmin);
+  color: white;  
+}
