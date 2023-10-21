@@ -1,15 +1,17 @@
-import { Link, Typography } from "@mui/material";
+import { Container, Link, Typography } from "@mui/material";
 
 const Copyright = (props: any) => {
     return (
-      <Typography variant="body2" color="text.secondary" align="center" {...props}>
-        {'Copyright © '}
-        <Link color="inherit" href="https://mui.com/">
-          www.star-hr.com
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-      </Typography>
+      <Container>
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+          {'Copyright © '}
+          <Link color="inherit" href="https://mui.com/">
+            www.star-hr.com
+          </Link>{' '}
+          {new Date().getFullYear()}
+          {'.'}
+        </Typography>
+      </Container> 
     );
   }
 
