@@ -9,6 +9,7 @@ using MassTransit;
 using DpAuthWebApi.Events;
 using DPAuth.Messages.Abstractions.Enums;
 using DPAuth.Messages.Abstractions.AuthEvents;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DpAuthWebApi.Controllers
 {
@@ -49,6 +50,17 @@ namespace DpAuthWebApi.Controllers
                 return BadRequest(response.ErrorMessage);
             }
 
+            var useLoggedinEvent = new UserCreatedEvent()
+            {
+                UserId = response.data.ToString(),
+                UserName = registerUserDto.UserName,
+                EmailId = registerUserDto.EmailId,
+                LoggedInDevice = LoginDevice.Web
+            };
+
+            //Publish UserCreated event
+            await _publishEndpoint.Publish<IUserLoggedInEvent>(useLoggedinEvent);
+
             return Ok(response.data);
         }
 
@@ -77,12 +89,13 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            //await _publishEndpoint.Publish<IUserLoggedInEvent>(useLoggedinEvent); 
+            await _publishEndpoint.Publish<IUserLoggedInEvent>(useLoggedinEvent); 
 
             return Ok(response.data);
         }
 
         [HttpPost("ChangePassword")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -107,7 +120,7 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            //await _publishEndpoint.Publish<IPasswordChangedEvent>(passwordChangedEvent);
+            await _publishEndpoint.Publish<IPasswordChangedEvent>(passwordChangedEvent);
 
             return Ok(response.data);
         }
@@ -136,9 +149,28 @@ namespace DpAuthWebApi.Controllers
             };
 
             //Publish User Logged in event
-            //await _publishEndpoint.Publish<ISendVerificationCodeEvent>(sendVerificationCodeEvent);
+            await _publishEndpoint.Publish<ISendVerificationCodeEvent>(sendVerificationCodeEvent);
 
             return Ok("Successfully sent the verification code");
+        }
+
+        [HttpPost("UpdatePassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public async Task<IActionResult> UpdatePassword(UpdateUserPassword User)
+        {
+            ServiceResponse<bool> response = await _authService.UpdatePassword(User.EmailId, User.VerificationCode, User.Password);
+
+            if (!response.IsSuccess)
+            {
+                if (response.Error == ErrorType.ValidationError)
+                    return BadRequest(response.ErrorMessage);
+
+                if (response.Error == ErrorType.GeneralError)
+                    return BadRequest(response.ErrorMessage);
+            }
+
+            return Ok("Successfully updated new password");
         }
     }
 }

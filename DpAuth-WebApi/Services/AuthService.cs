@@ -40,7 +40,7 @@ namespace DpAuthWebApi.Services
             return false;
         }
 
-        public async Task<UserDocument> GetExistingUserExistWithEmail(string emailId)
+        private async Task<UserDocument> GetExistingUserExistWithEmail(string emailId)
         {
             var user = await _dataContext.FindOneAsync(filter => filter.EmailId == emailId);
 
@@ -49,6 +49,33 @@ namespace DpAuthWebApi.Services
                 return user;
             }
             return null;
+        }
+
+        public async Task<ServiceResponse<bool>> UpdatePassword(string emailId, string verificationCode, string newpassword)
+        {
+            var user = await GetExistingUserExistWithEmail(emailId);
+
+            if (user == null)
+            {
+                return new ServiceResponse<bool> { data = false, IsSuccess = false, Error = ErrorType.ValidationError ,  ErrorMessage = "Missing or invalid email" };
+            }
+
+            if (!VerifyPasswordHash(verificationCode, Convert.FromBase64String(user.PwdHash), Convert.FromBase64String(user.PwdSalt)))
+            {
+                return new ServiceResponse<bool> { data = false, IsSuccess = false, Error = ErrorType.GeneralError, ErrorMessage = "Missing or invalid verification code" };
+            }
+            else
+            {
+                CreatePasswordHash(newpassword, out byte[] passwordHash, out byte[] passwordSalt);
+
+                user.PwdHash = Convert.ToBase64String(passwordHash, 0, passwordHash.Length);
+                user.PwdSalt = Convert.ToBase64String(passwordSalt, 0, passwordSalt.Length);
+                user.IsVerificationCodeSet = true;
+
+                await _dataContext.ReplaceOneAsync(user);
+
+                return new ServiceResponse<bool> { data = true, IsSuccess = true, Error = ErrorType.None, ErrorMessage = null };
+            }
         }
 
         public async Task<ServiceResponse<UserDetails>> Login(string username, string password)

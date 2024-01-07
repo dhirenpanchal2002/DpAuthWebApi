@@ -1,4 +1,4 @@
-import { RegisterUser, UserLogin } from "./data-contracts";
+import { RegisterUser, UpdateUserPassword, UserLogin } from "./data-contracts";
 import { Api } from "./Api";
 import { RequestParams } from "./http-client";
 import { getUser } from "../helpers/login-helper";
@@ -20,7 +20,7 @@ export class QueryKeys{
     static loggedInUserToken = (): string => {
         const val = QueryKeys.loggedInUser();
 
-        console.log('QueryKeys loggedInUser : ', val ? val : undefined);
+        console.log('QueryKeys loggedInUserToken  : ', val ? val : undefined);
 
         if(val === undefined)
             return "" ;
@@ -62,6 +62,14 @@ export class QueryKeys{
         }
     } 
 
+    static UpdateUserPassword = 
+    {
+        Key: 'UpdateUserPassword',
+        fn: async (data: UpdateUserPassword) =>{
+            return this.api.authUpdatePasswordCreate(data);
+        }
+    } 
+    
     static ChangePassword = 
     {
         Key: 'ChangePassword',

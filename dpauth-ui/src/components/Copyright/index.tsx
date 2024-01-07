@@ -1,18 +1,31 @@
-import { Container, Link, Typography } from "@mui/material";
+// material-ui
+import { useMediaQuery, Container, Link, Typography, Stack } from '@mui/material';
+
+// ==============================|| FOOTER - AUTHENTICATION ||============================== //
 
 const Copyright = (props: any) => {
-    return (
-      <Container>
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-          {'Copyright © '}
-          <Link color="inherit" href="https://mui.com/">
-            www.star-hr.com
-          </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
-        </Typography>
-      </Container> 
-    );
-  }
+  //const matchDownSM = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
-  export default Copyright;
+  return (
+    <Container maxWidth="xl">
+      <Stack
+        direction={'column'}
+        justifyContent={'center'}
+        spacing={2}
+        textAlign={'center'}
+      >
+        
+          <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+              www.star-hr.com
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+          </Typography>
+      </Stack>
+    </Container>
+  );
+};
+
+export default Copyright;

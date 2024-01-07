@@ -16,9 +16,9 @@ const isNullorEmpty = (val: object | string | null | undefined) : boolean =>
 
 export default isNullorEmpty;
 
-export const getTodoStatusColor = (todo : string | undefined) : Color => {
+export const getTodoStatusColor = (todo : string | null | undefined) : Color => {
 
-    if(todo === undefined)
+    if(todo === undefined || todo == null)
         return blue;  //(theme) => theme.palette.primary[600]
 
     switch(todo)

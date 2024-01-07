@@ -1,6 +1,6 @@
 export enum AnonymousComponents {    
     Login = 'Login',
     ForgotPassword = 'ForgotPassword',
-    ChangePassword = 'ChangePassword',
+    SetNewPassword = 'SetNewPassword',
     Registration = 'Registration'
 }

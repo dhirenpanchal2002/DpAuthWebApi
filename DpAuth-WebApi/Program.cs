@@ -33,11 +33,12 @@ namespace DpAuthWebApi
                (options =>
                    {
                        options.TokenValidationParameters = new TokenValidationParameters
-                       {
-                           ValidateIssuerSigningKey = true,
+                       {   
                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+
                            ValidateIssuer = false,
                            ValidateAudience = false,
+                           ValidateIssuerSigningKey = true,
                            ValidateLifetime = true,
                        };
                    }
@@ -56,6 +57,7 @@ namespace DpAuthWebApi
             builder.Services.AddScoped<IMongoRepository<LeaveDocument>, MongoRepository<LeaveDocument>>();
             builder.Services.AddScoped<IMongoRepository<TodoDocument>, MongoRepository<TodoDocument>>();
             //builder.Services.AddScoped<IMongoRepository<UserDocument>, MongoRepository<UserDocument>>();
+            
             // Inside of Program.cs
             builder.Services.AddSingleton<BlobServiceClient>(x =>
                 new BlobServiceClient(
@@ -164,9 +166,9 @@ namespace DpAuthWebApi
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication();
-
             app.UseCors();
+
+            app.UseAuthentication();                        
 
             app.UseAuthorization();
 

@@ -9,7 +9,15 @@
  * ---------------------------------------------------------------
  */
 
-import { LeaveDetail, RegisterUser, TeamDetails, TodoDetail, UserDetails, UserLogin } from "./data-contracts";
+import {
+  LeaveDetail,
+  RegisterUser,
+  TeamDetails,
+  TodoDetail,
+  UpdateUserPassword,
+  UserDetails,
+  UserLogin,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -85,6 +93,23 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
       method: "POST",
       query: query,
       secure: true,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Auth
+   * @name AuthUpdatePasswordCreate
+   * @request POST:/api/Auth/UpdatePassword
+   * @secure
+   */
+  authUpdatePasswordCreate = (data: UpdateUserPassword, params: RequestParams = {}) =>
+    this.request<void, string>({
+      path: `/api/Auth/UpdatePassword`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
       ...params,
     });
   /**
@@ -314,22 +339,6 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
   todosTodosList = (params: RequestParams = {}) =>
     this.request<TodoDetail[], string>({
       path: `/api/Todos/todos`,
-      method: "GET",
-      secure: true,
-      format: "json",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Todos
-   * @name TodosTodoStatusesList
-   * @request GET:/api/Todos/todoStatuses
-   * @secure
-   */
-  todosTodoStatusesList = (params: RequestParams = {}) =>
-    this.request<string[], string>({
-      path: `/api/Todos/todoStatuses`,
       method: "GET",
       secure: true,
       format: "json",

@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import * as React from 'react';
 import Box from '@mui/system/Box';
 import Grid from '@mui/system/Unstable_Grid';
@@ -25,7 +24,6 @@ const Home = () => {
      }
     return (
         <>
-            <Header showAddButton={true} headerText="Home" AddButtonText={""}  />    
             <Box sx={{ flexGrow: 1, p:'6vh' }}>
                 <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}
                     justifyContent="space-evenly"

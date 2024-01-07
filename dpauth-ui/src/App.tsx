@@ -14,6 +14,7 @@ import TopAppBar from './components/TopAppBar';
 import Users from './pages/Users';
 import Todos from './pages/Todos';
 import { getUser, removeUser, saveUser } from './helpers/login-helper';
+import { Box } from '@mui/material';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<CurrentUser>({
@@ -61,7 +62,7 @@ function App() {
   const queryClient = new QueryClient();
 
   return (
-    <>
+    <Box display='flex' flexDirection={'column'} justifyContent={'space-between'} height={1} sx={{border: ' 1px solid blue'}}>
         <QueryClientProvider client={queryClient}>
           {currentUser.IsAuthenticated && 
             <AuthContext.Provider value ={currentUser}>
@@ -81,8 +82,10 @@ function App() {
             </AuthContext.Provider>}
           {!currentUser.IsAuthenticated && <LoginPage OnLoginSuccess={OnLoginSuccess} />}
         </QueryClientProvider>
-        <Copyright sx={{ mt: 4, mb: 2 }} />
-      </>
+        <Box display='block'>
+          <Copyright sx={{ mt: 4, mb: 2}} />
+        </Box>
+      </Box>
   );
 }
 

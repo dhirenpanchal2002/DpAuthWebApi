@@ -72,7 +72,7 @@ const TodoView =({todoData,showDialog,openMode, onClose, onSave } : Props) => {
                             <Select disabled={openMode== viewMode.Display} 
                             labelId="todostatus-label"
                             id="todostatus-select"
-                            value={todo.status}
+                            value={todo.status ? todo.status : TodoStatus.Pending}
                             label="Status"
                             onChange={handleStatusChange}
                             >

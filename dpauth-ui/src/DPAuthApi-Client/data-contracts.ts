@@ -41,6 +41,12 @@ export enum LeaveCategory {
   Value2 = 2,
 }
 
+export enum TodoStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Completed = 'Completed',
+}
+
 export interface LeaveDetail {
   id?: string | null;
   userId?: string | null;
@@ -96,18 +102,17 @@ export interface TodoDetail {
   id?: string | null;
   summary?: string | null;
   description?: string | null;
-  status?: TodoStatus;
+  status?: string | null;
   /** @format date-time */
   completedOn?: string | null;
   /** @format date-time */
   createdAt?: string | null;
 }
 
-/** @format int32 */
-export enum TodoStatus {
-  Completed = 'Completed',
-  InProgress = 'InProgress',
-  Pending = 'Pending'
+export interface UpdateUserPassword {
+  emailId?: string | null;
+  verificationCode?: string | null;
+  password?: string | null;
 }
 
 export interface UserDetails {

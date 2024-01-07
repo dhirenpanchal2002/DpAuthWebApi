@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Login from '../../components/Login';
 import {AnonymousComponents} from './types'
 import ForgotPassword from '../../components/ForgotPassword';
-import ChangePassword from '../../components/ChangePassword';
+import SetNewPassword from '../../components/SetNewPassword';
 import {CurrentUser} from '../../providers/AuthContext/Type';
 import Registration from '../../components/Registration';
 import { Box, Card, Container, Typography } from '@mui/material';
@@ -33,7 +33,7 @@ const LoginPage = ({OnLoginSuccess} : Props) => {
            boxShadow:'6', borderRadius:[4,8]}}>        
         {currentComponent === AnonymousComponents.Login && <Login setComponent={SetCurrentComponent} SetLoginUser={OnLoginSuccess} />}
         {currentComponent === AnonymousComponents.ForgotPassword && <ForgotPassword setComponent={SetCurrentComponent}/>}
-        {currentComponent === AnonymousComponents.ChangePassword && <ChangePassword setComponent={SetCurrentComponent}/>}
+        {currentComponent === AnonymousComponents.SetNewPassword && <SetNewPassword setComponent={SetCurrentComponent}/>}
         {currentComponent === AnonymousComponents.Registration && <Registration setComponent={SetCurrentComponent}/>}
       </Card>
     </Container>
