@@ -40,9 +40,6 @@ steps:
     ArtifactName: 'dpauth-webapi'
     publishLocation: 'Container'
 
-- download: current
-  artifact: 'dpauth-webapi'
-  
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
