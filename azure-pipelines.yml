@@ -41,7 +41,7 @@ steps:
     publishLocation: 'Container'
 
 - download: current
-  artifact: drop
+  artifact: 'dpauth-webapi'
   
 - task: AzureRmWebAppDeployment@4
   inputs:
