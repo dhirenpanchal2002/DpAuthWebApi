@@ -50,6 +50,6 @@ steps:
     appType: 'webApp'
     WebAppName: 'dpAuthWebApi'
     VirtualApplication: 'dpAuthWebApi'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/Container/*.zip'
     enableCustomDeployment: true
     DeploymentType: 'zipDeploy'
