@@ -13,6 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  buildversion: '$(Build.BuildNumber)'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -38,3 +39,10 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'dpauth-webapi'
     publishLocation: 'Container'
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'AzureFreeSubscription8Jan2024(c1e01002-392e-4217-826f-36a7849c655b)'
+    appType: 'webApp'
+    WebAppName: 'dpAuthWebApi'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
