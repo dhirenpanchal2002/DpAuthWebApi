@@ -39,6 +39,10 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'dpauth-webapi'
     publishLocation: 'Container'
+
+- download: current
+  artifact: drop
+  
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
