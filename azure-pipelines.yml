@@ -59,7 +59,6 @@ steps:
     azureSubscription: 'AzureFreeSubscription8Jan2024(c1e01002-392e-4217-826f-36a7849c655b)'
     appType: 'webApp'    
     WebAppName: 'dpAuthWebApi'
-    VirtualApplication: 'dpAuthWebApi'
     packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
     enableCustomDeployment: true
     DeploymentType: 'zipDeploy'
