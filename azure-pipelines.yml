@@ -38,14 +38,18 @@ steps:
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'dpauth-webapi'
-    publishLocation: 'FilePath'
-    TargetPath: '/'
+    publishLocation: 'container'
 
+- task: DownloadPipelineArtifact@2
+  inputs:
+    buildType: 'current'
+    artifactName: 'dpauth-webapi'
+    targetPath: '$(System.DefaultWorkingDirectory)'
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'AzureFreeSubscription8Jan2024(c1e01002-392e-4217-826f-36a7849c655b)'
-    appType: 'webApp'
+    appType: 'webApp'    
     WebAppName: 'dpAuthWebApi'
     VirtualApplication: 'dpAuthWebApi'
     packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
