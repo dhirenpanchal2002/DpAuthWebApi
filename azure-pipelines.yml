@@ -38,7 +38,8 @@ steps:
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'dpauth-webapi'
-    publishLocation: 'Container'
+    publishLocation: 'FilePath'
+    TargetPath: '/'
 
 - task: AzureRmWebAppDeployment@4
   inputs:
@@ -47,6 +48,6 @@ steps:
     appType: 'webApp'
     WebAppName: 'dpAuthWebApi'
     VirtualApplication: 'dpAuthWebApi'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/Container/*.zip'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
     enableCustomDeployment: true
     DeploymentType: 'zipDeploy'
