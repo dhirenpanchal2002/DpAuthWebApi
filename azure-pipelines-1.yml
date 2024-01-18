@@ -1,0 +1,27 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Npm@1
+  inputs:
+    command: 'install'
+    customRegistry: 'useFeed'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: '"/dpauth-ui"'
+    customCommand: 'run build'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'build'
+    ArtifactName: 'dpauth-ui'
+    publishLocation: 'Container'
