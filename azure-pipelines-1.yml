@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: windows-latest
+  name: 'local-self-hosted'
 
 steps:
 - task: Npm@1
