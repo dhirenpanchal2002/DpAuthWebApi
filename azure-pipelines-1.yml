@@ -5,6 +5,7 @@
 
 trigger:
 - main
+- dpauth-ui/*
 
 pool:
   name: 'local-self-hosted'
@@ -13,12 +14,12 @@ steps:
 - task: Npm@1
   inputs:
     command: 'install'
-    workingDir: '"/dpauth-ui"'
+    workingDir: '"$(System.DefaultWorkingDirectory)/dpauth-ui"'
     customRegistry: 'useFeed'
 - task: Npm@1
   inputs:
     command: 'custom'
-    workingDir: '"/dpauth-ui"'
+    workingDir: '"$(System.DefaultWorkingDirectory)/dpauth-ui"'
     customCommand: 'run build'
 
 - task: PublishBuildArtifacts@1
